@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0c12">
+<title>ABISMO — A Última Descida</title>
+<style>
+:root{
+  --bg:#090a0f;--surface:rgba(20,22,31,.78);--surface-2:rgba(29,32,44,.82);
+  --surface-3:#242838;--line:rgba(220,204,165,.15);--line-hot:rgba(225,190,119,.42);
+  --text:#eee9df;--muted:#9999a5;--gold:#d9b779;--gold-bright:#f0d39b;
+  --violet:#a99be8;--teal:#83c8b5;--red:#e47b80;--radius:18px;
+  --shadow:0 24px 70px rgba(0,0,0,.38);--ease:cubic-bezier(.2,.8,.2,1)
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+ background:radial-gradient(ellipse at 15% 0%,rgba(112,83,130,.20),transparent 36%),radial-gradient(ellipse at 90% 12%,rgba(177,139,79,.13),transparent 30%),var(--bg);
+ padding:24px}
+button{font:inherit}
+button:focus-visible{outline:2px solid var(--gold-bright);outline-offset:3px}
+.shell{max-width:1240px;margin:auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 22px}
+.brand{display:flex;align-items:center;gap:13px}
+.brand-mark{width:42px;height:42px;border:1px solid var(--line-hot);border-radius:14px;display:grid;place-items:center;color:var(--gold);font-size:20px;background:linear-gradient(145deg,rgba(217,183,121,.15),rgba(169,155,232,.07));box-shadow:0 0 28px rgba(217,183,121,.08)}
+.brand-name{font:700 18px/1 Georgia,serif;letter-spacing:5px}
+.brand-sub{font-size:9px;letter-spacing:2.2px;color:var(--muted);margin-top:6px;text-transform:uppercase}
+.top-meta{display:flex;gap:9px;align-items:center}
+.pill{border:1px solid var(--line);background:rgba(255,255,255,.035);border-radius:999px;padding:8px 12px;color:var(--muted);font-size:11px;backdrop-filter:blur(14px)}
+.pill b{color:var(--gold-bright);font-weight:650}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start}
+.glass{background:linear-gradient(145deg,rgba(26,29,41,.88),rgba(14,16,24,.83));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.stage{min-height:690px;padding:clamp(20px,3vw,34px);position:relative;overflow:hidden;display:flex;flex-direction:column}
+.stage:before{content:"";position:absolute;inset:0 0 auto;height:220px;background:radial-gradient(ellipse at 50% -25%,rgba(217,183,121,.12),transparent 68%);pointer-events:none}
+.stage-inner{position:relative;z-index:1;display:flex;flex-direction:column;flex:1}
+.kicker{display:flex;align-items:center;gap:9px;color:var(--gold);font-size:10px;letter-spacing:2.3px;text-transform:uppercase;font-weight:700}
+.kicker:before{content:"";width:20px;height:1px;background:var(--gold)}
+.scene-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:17px 0 22px}
+h1,h2,h3,p{margin-top:0}
+.scene-title{font:600 clamp(29px,4vw,43px)/1.1 Georgia,serif;letter-spacing:-.8px;margin:0;color:#f3ead9}
+.scene-mark{color:rgba(217,183,121,.42);font:italic 42px Georgia;line-height:1}
+.story-wrap{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:22px 0;min-height:240px;max-height:390px;overflow:auto;scrollbar-width:thin;scrollbar-color:#514b43 transparent}
+.story{white-space:pre-line;color:#c9c8cc;font:15px/1.9 Georgia,serif;max-width:760px;animation:storyIn .55s var(--ease) both}
+.story strong{color:var(--gold-bright)}
+.story .voice{color:#c5b8f2;font-style:italic}
+.story .warning{color:#f09a9e}
+@keyframes storyIn{from{opacity:0;transform:translateY(8px);filter:blur(3px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+.actions-head{display:flex;align-items:center;justify-content:space-between;margin:22px 0 11px}
+.actions-head span{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700}
+.actions{display:grid;gap:9px}
+.action{position:relative;display:flex;align-items:center;gap:13px;text-align:left;width:100%;padding:14px 15px;border:1px solid rgba(220,204,165,.14);border-radius:13px;background:linear-gradient(110deg,rgba(39,42,57,.82),rgba(26,29,41,.78));color:var(--text);cursor:pointer;transition:transform .2s var(--ease),border-color .2s,background .2s,box-shadow .2s;overflow:hidden}
+.action:before{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent,rgba(240,211,155,.07),transparent);transform:translateX(-110%);transition:transform .55s}
+.action:hover{transform:translateY(-2px) scale(1.006);border-color:var(--line-hot);box-shadow:0 9px 26px rgba(0,0,0,.22),0 0 20px rgba(217,183,121,.06)}
+.action:hover:before{transform:translateX(110%)}
+.action:active{transform:scale(.985)}
+.action:disabled{opacity:.38;cursor:not-allowed;transform:none}
+.action-icon{width:30px;height:30px;flex:0 0 30px;border-radius:9px;background:rgba(217,183,121,.10);display:grid;place-items:center;color:var(--gold);font-size:14px}
+.action-copy{display:block;min-width:0}
+.action-copy b{display:block;font-size:13px;font-weight:650}
+.action-copy small{display:block;color:var(--muted);font-size:11px;margin-top:3px;line-height:1.4}
+.side{display:grid;gap:14px}
+.card{padding:17px 18px}
+.card-title{display:flex;align-items:center;justify-content:space-between;margin:0 0 15px;color:#dcd2bf;font-size:10px;letter-spacing:1.9px;text-transform:uppercase;font-weight:750}
+.card-title em{font-style:normal;color:var(--muted);font-size:9px;letter-spacing:1px}
+.floor-card{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(115deg,rgba(217,183,121,.10),rgba(169,155,232,.06));border:1px solid var(--line-hot);border-radius:13px;padding:12px 13px;margin-bottom:16px}
+.floor-number{font:28px/1 Georgia,serif;color:var(--gold-bright)}
+.floor-caption{font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-top:5px}
+.floor-symbol{font:28px Georgia;color:rgba(217,183,121,.55)}
+.stat{margin:12px 0}
+.stat-top{display:flex;justify-content:space-between;align-items:center;font-size:11px;margin-bottom:7px;color:#c8c8d0}
+.stat-top b{font-variant-numeric:tabular-nums;color:#f1ece3}
+.track{height:6px;border-radius:99px;background:#090b11;overflow:hidden;border:1px solid rgba(255,255,255,.035)}
+.fill{height:100%;border-radius:99px;width:50%;transition:width .65s var(--ease);position:relative}
+.fill:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.27),transparent);opacity:.65}
+.fill.hp{background:linear-gradient(90deg,#a34455,#ef8983)}.fill.food{background:linear-gradient(90deg,#8c6538,#e5b96e)}.fill.mind{background:linear-gradient(90deg,#67549e,#b5a3ed)}
+.low-health .fill.hp{animation:pulse 1.1s infinite}
+@keyframes pulse{50%{filter:brightness(1.7);box-shadow:0 0 12px rgba(228,123,128,.6)}}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px}
+.mini-stat{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.045);border-radius:10px;padding:9px 10px}
+.mini-stat span{display:block;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.mini-stat b{display:block;font:17px Georgia;color:#eee2ca;margin-top:4px}
+.inventory{display:flex;flex-wrap:wrap;gap:6px;min-height:24px}
+.item{font-size:10px;color:#d7c9a9;background:rgba(217,183,121,.08);border:1px solid rgba(217,183,121,.17);border-radius:7px;padding:5px 8px}
+.empty{color:var(--muted);font-size:11px}
+.log{display:grid;gap:8px;max-height:160px;overflow:auto;scrollbar-width:thin;scrollbar-color:#514b43 transparent}
+.log-entry{font-size:10px;line-height:1.5;color:#a9aab4;padding-left:10px;border-left:1px solid rgba(217,183,121,.38);animation:storyIn .3s ease both}
+.log-entry:first-child{color:#e4d4b5}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:20px}
+.utility{border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:rgba(255,255,255,.035);color:var(--muted);font-size:10px;cursor:pointer;transition:.2s}
+.utility:hover{color:var(--gold-bright);border-color:var(--line-hot);background:rgba(217,183,121,.07)}
+.screen{max-width:780px;margin:5vh auto;text-align:center;padding:clamp(22px,5vw,48px)}
+.screen h2{font:600 clamp(32px,6vw,52px)/1.1 Georgia,serif;color:#f0e2c8;margin:17px 0}
+.screen p{max-width:590px;margin:0 auto 15px;color:#b9b7c0;line-height:1.8;font:14px/1.8 Georgia,serif}
+.primary{border:1px solid rgba(240,211,155,.55);border-radius:11px;padding:13px 20px;background:linear-gradient(110deg,#b38c52,#dfbd80);color:#17130e;font-weight:750;font-size:12px;letter-spacing:.3px;cursor:pointer;box-shadow:0 8px 26px rgba(217,183,121,.13);transition:.2s}
+.primary:hover{transform:translateY(-2px);filter:brightness(1.08);box-shadow:0 12px 32px rgba(217,183,121,.2)}
+.secondary{border:1px solid var(--line);border-radius:11px;padding:12px 16px;background:rgba(255,255,255,.04);color:var(--text);font-size:11px;cursor:pointer}
+.menu-actions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:24px}
+.upgrades{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:left;margin:25px 0}
+.upgrade{padding:13px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.035)}
+.upgrade b{font-size:11px;color:var(--gold-bright)}.upgrade p{font:10px/1.5 system-ui;color:var(--muted);margin:6px 0}.upgrade button{font-size:10px;padding:7px 9px}
+.hidden{display:none!important}
+.end-mark{font:italic 60px Georgia;color:var(--gold);margin:4px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#242638;border:1px solid var(--line-hot);border-radius:10px;padding:10px 15px;color:#f0dfbf;font-size:11px;box-shadow:var(--shadow);transition:.3s;z-index:5}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:900px){body{padding:15px}.layout{grid-template-columns:minmax(0,1fr) 275px}.stage{min-height:660px}}
+@media(max-width:720px){.layout{grid-template-columns:1fr}.side{grid-template-columns:1fr 1fr}.side .card:last-child{grid-column:1/-1}.stage{min-height:unset}.story-wrap{max-height:320px}.topbar{align-items:flex-start}.top-meta{flex-wrap:wrap;justify-content:flex-end}}
+@media(max-width:480px){body{padding:10px}.topbar{margin-bottom:13px}.brand-name{font-size:15px}.brand-sub{font-size:8px}.pill{font-size:9px;padding:7px 9px}.side{display:flex}.scene-head{margin:14px 0 17px}.story-wrap{padding:17px 0;min-height:200px}.action{padding:12px}.upgrades{grid-template-columns:1fr}.screen{margin:2vh auto}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="topbar">
+ <div class="brand"><div class="brand-mark">✦</div><div><div class="brand-name">ABISMO</div><div class="brand-sub">A última descida</div></div></div>
+ <div class="top-meta"><div class="pill">ECOS <b id="echoTop">0</b></div><div class="pill">EXPEDIÇÕES <b id="runsTop">0</b></div></div>
+</header>
+
+<section id="menu" class="screen glass">
+ <div class="kicker" style="justify-content:center">Um roguelike narrativo</div>
+ <div class="end-mark">✧</div>
+ <h2>A masmorra se lembra<br>de cada passo.</h2>
+ <p>Sob a cidade de Véspera, uma escadaria desce para um lugar que não deveria existir. Criaturas guardam histórias, comerciantes vendem lembranças e cada porta parece conhecer seu nome.</p>
+ <p>Explore salas em ordem imprevisível, sobreviva com recursos limitados e escolha suas palavras com cuidado. A morte encerra a expedição — mas os Ecos conquistados fortalecem quem vier depois.</p>
+ <div class="upgrades" id="upgradeArea"></div>
+ <div class="menu-actions"><button class="primary" onclick="startRun()">Começar uma descida&nbsp; →</button><button class="secondary" onclick="showCodex()">Registro de expedições</button></div>
+</section>
+
+<section id="game" class="hidden">
+ <div class="layout">
+  <main class="stage glass">
+   <div class="stage-inner">
+    <div class="kicker" id="roomTag">ANDAR 01 · SALA 01</div>
+    <div class="scene-head"><h1 class="scene-title" id="roomTitle">A escadaria</h1><div class="scene-mark">✧</div></div>
+    <div class="story-wrap"><div class="story" id="story"></div></div>
+    <div class="actions-head"><span>O que você faz?</span><span id="choiceHint">ESCOLHA UMA AÇÃO</span></div>
+    <div class="actions" id="choices"></div>
+    <div class="toolbar"><button class="utility" onclick="showStatus()">▤ Resumo da expedição</button><button class="utility" onclick="abandonRun()">↗ Abandonar descida</button></div>
+   </div>
+  </main>
+  <aside class="side">
+   <section class="card glass" id="statusCard">
+    <h3 class="card-title">Explorador <em id="classLabel">VIAJANTE</em></h3>
+    <div class="floor-card"><div><div class="floor-number" id="floorNumber">01</div><div class="floor-caption">andar atual</div></div><div class="floor-symbol">⌘</div></div>
+    <div id="stats"></div>
+    <div class="stats-grid" id="attributes"></div>
+   </section>
+   <section class="card glass"><h3 class="card-title">Relíquias <em id="itemCount">0 ITENS</em></h3><div class="inventory" id="inventory"></div></section>
+   <section class="card glass"><h3 class="card-title">Crônica recente <em>ÚLTIMOS EVENTOS</em></h3><div class="log" id="eventLog"></div></section>
+  </aside>
+ </div>
+</section>
+
+<section id="codex" class="screen glass hidden">
+ <div class="kicker" style="justify-content:center">Arquivo de Véspera</div><h2>O que ficou da descida</h2><p id="codexText"></p><div class="menu-actions"><button class="secondary" onclick="backToMenu()">Voltar ao acampamento</button></div>
+</section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ==========================================================
+   ABISMO — núcleo narrativo.
+   1) generateFloor embaralha uma sequência de arquétipos de sala.
+   2) makeRoom sorteia personagens/inimigos e escala desafios pelo andar.
+   3) diálogos são árvores de opções: req() controla disponibilidade;
+      effect() altera atributos/flags e reply define a reação narrativa.
+   4) meta é persistente; run é descartada na morte (permadeath).
+   Para expandir: adicione arquétipos em makeRoom() e árvores em dialogueTrees.
+========================================================== */
+const SAVE_KEY="abismo_meta_modern_v2";
+const BASE_META={echoes:0,runs:0,bestFloor:0,upgrades:{vitality:0,charisma:0,insight:0}};
+let meta=loadMeta(),run=null,room=null,activeDialogue=null;
+const $=id=>document.getElementById(id);
+const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{const x=[...a];for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]]}return x};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function loadMeta(){try{let x=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");return x?{...BASE_META,...x,upgrades:{...BASE_META.upgrades,...x.upgrades}}:structuredClone(BASE_META)}catch{return structuredClone(BASE_META)}}
+function saveMeta(){localStorage.setItem(SAVE_KEY,JSON.stringify(meta))}
+function notify(s){const t=$("toast");t.textContent=s;t.classList.add("show");clearTimeout(notify.timer);notify.timer=setTimeout(()=>t.classList.remove("show"),1900)}
+function log(s){run.log.unshift(s);run.log=run.log.slice(0,8);$("eventLog").innerHTML=run.log.map(x=>`<div class="log-entry">${esc(x)}</div>`).join("")}
+function show(id){["menu","game","codex"].forEach(x=>$(x).classList.toggle("hidden",x!==id))}
+function renderMenu(){
+ $("echoTop").textContent=meta.echoes;$("runsTop").textContent=meta.runs;
+ const data=[["vitality","Vigor ancestral","+5 de Vida inicial por nível",4+meta.upgrades.vitality*3],["charisma","Voz convincente","+1 Carisma por nível",4+meta.upgrades.charisma*3],["insight","Olhar profundo","+1 Intuição por nível",4+meta.upgrades.insight*3]];
+ $("upgradeArea").innerHTML=data.map(([id,n,d,c])=>`<div class="upgrade"><b>${n} · Nv. ${meta.upgrades[id]}</b><p>${d}</p><button class="secondary" ${meta.echoes<c?"disabled":""} onclick="buyUpgrade('${id}',${c})">Desbloquear · ${c} Ecos</button></div>`).join("");
+}
+function buyUpgrade(id,cost){if(meta.echoes<cost)return;meta.echoes-=cost;meta.upgrades[id]++;saveMeta();renderMenu();notify("Melhoria permanente adquirida.")}
+function startRun(){
+ const hp=32+meta.upgrades.vitality*5;
+ run={floor:1,index:0,rooms:[],hp,maxHp:hp,food:5,sanity:75,gold:5,xp:0,power:5,charisma:2+meta.upgrades.charisma,intuition:2+meta.upgrades.insight,items:["Faca de viagem"],flags:{},kills:0,log:[],roomCount:0};
+ meta.runs++;saveMeta();show("game");log("Você cruzou o arco de pedra. A descida começou.");generateFloor();enterRoom();
+}
+function generateFloor(){
+ // A composição é parcialmente fixa para manter ritmo (combate, NPC, evento, tesouro)
+ // e parcialmente aleatória para que o percurso não se repita.
+ const pool=["combat","npc","event","treasure",pick(["combat","merchant","rest","npc","event"])];
+ run.rooms=shuffle(pool);run.index=0;log(`O andar ${run.floor} rearranjou suas salas.`);
+}
+function makeRoom(type){
+ const d=run.floor;
+ if(type==="combat"){
+  const foes=[["Cão de fuligem",12+d*3,3+Math.floor(d/2),"A criatura fareja o ar. Há inteligência demais naquele olhar."],["Sentinela rachado",16+d*3,4+Math.floor(d/2),"Uma armadura vazia ergue a espada. Uma oração foi gravada no elmo."],["Monge de sal",13+d*3,4+Math.floor(d/2),"O monge inclina a cabeça. “Você chegou tarde.”"]];
+  const f=pick(foes);return{type,title:f[0],text:f[3],enemy:{name:f[0],hp:f[1],max:f[1],power:f[2]}};
+ }
+ if(type==="npc")return{type,title:"Uma voz junto à lanterna",text:"Uma figura encapuzada está sentada ao lado de uma lanterna violeta. Ela não esconde o rosto; parece não ter um rosto que você reconheça.",npc:pick(["mara","odran","echo"])};
+ if(type==="merchant")return{type,title:"A loja de coisas perdidas",text:"Um vendedor de luvas douradas organiza objetos que parecem ter sido esquecidos pelo mundo. “Tudo tem um preço”, diz. “Nem tudo aceita moedas.”"};
+ if(type==="rest")return{type,title:"A capela sem divindade",text:"Bancos de pedra cercam uma chama azul. O lugar oferece descanso, mas a chama observa você como um animal paciente."};
+ if(type==="treasure")return{type,title:"O cofre de dobradiças vivas",text:"Um pequeno cofre pulsa no centro da sala. Não há fechadura: apenas uma fenda estreita, do tamanho de uma promessa."};
+ return{type,title:"Uma sala que lembra",text:"As paredes exibem cenas de uma vida que talvez seja sua. Uma delas mostra você chegando aqui — mas com uma cicatriz que ainda não existe."};
+}
+function enterRoom(){
+ if(run.food<=0){run.hp-=3;run.sanity-=4;log("A fome castiga: -3 Vida e -4 Sanidade.")}
+ if(run.hp<=0)return die("A fome e o cansaço encerraram sua descida.");
+ if(run.sanity<=0)return die("A masmorra ocupou cada espaço da sua mente.");
+ room=makeRoom(run.rooms[run.index]);run.roomCount++;activeDialogue=null;renderRoom();
+}
+function renderRoom(){
+ $("roomTag").textContent=`ANDAR ${String(run.floor).padStart(2,"0")} · SALA ${run.index+1} / ${run.rooms.length}`;
+ $("roomTitle").textContent=room.title;
+ setStory(room.text);
+ $("choices").innerHTML="";
+ const add=(icon,title,desc,fn,disabled=false)=>{const b=document.createElement("button");b.className="action";b.disabled=disabled;b.innerHTML=`<span class="action-icon">${icon}</span><span class="action-copy"><b>${esc(title)}</b>${desc?`<small>${esc(desc)}</small>`:""}</span>`;b.onclick=fn;$("choices").appendChild(b)};
+ if(room.type==="combat"){
+  add("⚔","Atacar","Golpe direto. Seu Poder define o dano.",attack);
+  add("◉","Estudar a criatura","Use Intuição para encontrar uma abertura.",study);
+  add("✧","Tentar conversar","Talvez exista alguém por trás dos dentes.",()=>startDialogue("monster"));
+  add("↶","Recuar","Custa 1 Alimento e até 2 Ouro.",retreat);
+ }else if(room.type==="npc"){
+  add("☷","Conversar","Ouça antes de decidir.",()=>startDialogue(room.npc));
+  add("◈","Oferecer 2 Ouro","Uma pequena gentileza pode abrir portas.",bribe,run.gold<2);
+  add("→","Seguir em frente","Nem toda história precisa ser sua.",()=>clearRoom("Você deixou a figura junto à lanterna."));
+ }else if(room.type==="merchant"){
+  add("＋","Comprar provisões","3 Ouro · +3 Alimentos.",()=>buy("food",3),run.gold<3);
+  add("✚","Comprar tônico","5 Ouro · recupera 10 Vida.",()=>buy("potion",5),run.gold<5||run.hp===run.maxHp);
+  add("◇","Comprar amuleto","8 Ouro · +1 Intuição.",()=>buy("amulet",8),run.gold<8);
+  add("♢","Pechinchar","Carisma alto pode reduzir o preço.",haggle);
+  add("→","Ir embora","O vendedor acena, como se já soubesse que voltará.",()=>clearRoom());
+ }else if(room.type==="rest"){
+  add("☾","Descansar","+9 Vida, +8 Sanidade; consome 1 Alimento.",()=>{run.hp=clamp(run.hp+9,0,run.maxHp);run.sanity=clamp(run.sanity+8,0,100);run.food=Math.max(0,run.food-1);log("Você descansou: +9 Vida, +8 Sanidade, -1 Alimento.");clearRoom()});
+  add("✧","Meditar junto à chama","+17 Sanidade, mas custa 3 Vida.",()=>{run.sanity=clamp(run.sanity+17,0,100);run.hp=Math.max(1,run.hp-3);log("A chama acalmou sua mente: +17 Sanidade, -3 Vida.");clearRoom()});
+  add("→","Não confiar no lugar","Deixe a capela para trás.",()=>clearRoom());
+ }else if(room.type==="treasure"){
+  add("◈","Abrir o cofre","A sorte também é um recurso.",openTreasure);
+  add("◎","Ouvir a parede","+1 Intuição, -3 Sanidade.",()=>{run.intuition++;run.sanity-=3;log("Você ouviu um segredo na pedra: +1 Intuição, -3 Sanidade.");clearRoom()});
+  add("→","Deixar quieto","Nem todo prêmio vale o risco.",()=>clearRoom());
+ }else{
+  add("◉","Tocar a lembrança","Descubra o que a parede quer mostrar.",memoryEvent);
+  add("✧","Dar nome ao medo","+5 Sanidade, +1 Carisma.",()=>{run.sanity=clamp(run.sanity+5,0,100);run.charisma++;log("Dar nome ao medo o tornou menor: +5 Sanidade, +1 Carisma.");clearRoom()});
+  add("→","Não olhar para trás","Continue descendo.",()=>clearRoom());
+ }
+ updateUI();
+}
+function setStory(text){const s=$("story");s.classList.remove("story");void s.offsetWidth;s.textContent=text;s.classList.add("story");$("story-wrap")?.scrollTo(0,0)}
+function attack(){
+ const e=room.enemy;let dmg=run.power+Math.floor(Math.random()*4)+(run.flags.opening?4:0);run.flags.opening=false;e.hp-=dmg;log(`Você causou ${dmg} de dano a ${e.name}.`);
+ if(e.hp<=0){run.kills++;run.xp+=5;run.gold+=2+Math.floor(Math.random()*4);run.food=Math.max(0,run.food-1);log(`${e.name} caiu. +5 XP, ouro recuperado e -1 Alimento.`);clearRoom();return}
+ enemyTurn();
+}
+function enemyTurn(){const e=room.enemy,dmg=Math.max(1,e.power-Math.floor(Math.random()*2));run.hp-=dmg;run.sanity=Math.max(0,run.sanity-1);log(`${e.name} atacou: -${dmg} Vida.`);if(run.hp<=0)return die("A criatura venceu o último combate.");if(run.sanity<=0)return die("O terror rompeu sua concentração.");renderRoom()}
+function study(){if(run.intuition+Math.random()*3>=3){run.flags.opening=true;run.sanity=Math.max(0,run.sanity-1);log("Você encontrou uma abertura. O próximo ataque causará dano extra.");setStory(room.text+"\n\nVocê lê o padrão da criatura. Por um instante, a guarda dela se desfaz.");updateUI()}else{log("Você não encontrou uma abertura.");enemyTurn()}}
+function retreat(){run.food=Math.max(0,run.food-1);run.gold=Math.max(0,run.gold-2);log("Você recuou: -1 Alimento e até 2 Ouro.");clearRoom("A criatura não perseguiu você. Desta vez.")}
+function clearRoom(msg=""){if(msg)log(msg);$("choices").innerHTML="";setStory(room.text+"\n\nA passagem adiante se abre.");const b=document.createElement("button");b.className="action";b.innerHTML=`<span class="action-icon">↓</span><span class="action-copy"><b>${run.index===run.rooms.length-1?"Descer ao próximo andar":"Avançar para a próxima sala"}</b><small>Não há como prever o que espera do outro lado.</small></span>`;b.onclick=nextRoom;$("choices").appendChild(b);updateUI()}
+function nextRoom(){if(run.index<run.rooms.length-1){run.index++;enterRoom()}else{run.floor++;meta.bestFloor=Math.max(meta.bestFloor,run.floor);saveMeta();run.food=Math.max(0,run.food-1);log(`Você alcançou o andar ${run.floor}.`);generateFloor();enterRoom()}}
+function openTreasure(){const n=Math.random();if(n<.35){run.gold+=8;log("O cofre guardava 8 Ouro.")}else if(n<.68){run.items.push("Selo de âmbar");run.power++;log("Selo de âmbar adquirido: +1 Poder.")}else{run.hp=Math.max(1,run.hp-5);run.sanity=Math.max(0,run.sanity-5);run.gold+=12;log("O cofre mordeu sua mão: -5 Vida, -5 Sanidade, +12 Ouro.")}clearRoom()}
+function memoryEvent(){const n=Math.floor(Math.random()*3);if(n===0){run.sanity=clamp(run.sanity+12,0,100);run.flags.kindMemory=true;log("Uma lembrança gentil retornou: +12 Sanidade.")}else if(n===1){run.power++;run.sanity=Math.max(0,run.sanity-8);log("Você recordou como lutar: +1 Poder, -8 Sanidade.")}else{run.gold+=6;log("Uma memória revelou um esconderijo: +6 Ouro.")}clearRoom()}
+function buy(type,cost){if(run.gold<cost){notify("Ouro insuficiente.");return}run.gold-=cost;if(type==="food"){run.food+=3;log("Você comprou 3 Alimentos.")}if(type==="potion"){run.hp=clamp(run.hp+10,0,run.maxHp);log("O tônico recuperou até 10 Vida.")}if(type==="amulet"){run.intuition++;run.items.push("Amuleto de vidro");log("Amuleto de vidro: +1 Intuição.")}updateUI();renderRoom()}
+function haggle(){if(run.charisma+Math.floor(Math.random()*4)>=5){run.flags.discount=true;log("Sua conversa convenceu o vendedor: ração por 2 Ouro.");$("choices").innerHTML="";addChoice("＋","Comprar ração com desconto","2 Ouro · +3 Alimentos.",()=>{if(run.gold<2){notify("Ouro insuficiente.");return}run.gold-=2;run.food+=3;log("Você comprou provisões com desconto.");clearRoom()},run.gold<2);addChoice("→","Encerrar negociação","",()=>clearRoom())}else{run.sanity=Math.max(0,run.sanity-2);log("A pechincha falhou. -2 Sanidade.");clearRoom("O vendedor perdeu o interesse.")}}
+function addChoice(icon,title,desc,fn,disabled=false){const b=document.createElement("button");b.className="action";b.disabled=disabled;b.innerHTML=`<span class="action-icon">${icon}</span><span class="action-copy"><b>${esc(title)}</b>${desc?`<small>${esc(desc)}</small>`:""}</span>`;b.onclick=fn;$("choices").appendChild(b)}
+function bribe(){if(run.gold<2)return;run.gold-=2;run.charisma++;log("A figura aceitou as moedas e ensinou uma palavra antiga: +1 Carisma.");clearRoom()}
+
+/* Diálogos com condições e consequências. Flags podem ser consultadas
+   em outras salas para criar continuidade narrativa entre encontros. */
+const dialogueTrees={
+ mara:{name:"Mara, a cartógrafa",intro:"“Mapas são promessas desenhadas por pessoas que ainda não se perderam.” Ela observa sua mochila.",options:[
+  {text:"“O que você procura aqui embaixo?”",req:()=>true,reply:"“Meu irmão mapeou uma porta que aparece apenas para quem sente saudade.”",effect:()=>{run.flags.maraQuest=true;run.intuition++;log("Trama secundária iniciada: o irmão de Mara. +1 Intuição.")}},
+  {text:"“Posso comprar uma rota segura?”",req:()=>run.gold>=3,reply:"“Por três moedas, digo onde a pedra não range.”",effect:()=>{run.gold-=3;run.flags.safeRoute=true;run.sanity=clamp(run.sanity+5,0,100);log("Mara marcou uma rota segura: -3 Ouro, +5 Sanidade.")}},
+  {text:"“Você está mentindo sobre seu irmão.”",req:()=>run.intuition>=3,reply:"Mara perde o sorriso. “Então você também ouviu a parede.”",effect:()=>{run.flags.wallSecret=true;run.sanity=Math.max(0,run.sanity-4);run.items.push("Mapa incompleto");log("Você descobriu um segredo e recebeu um Mapa incompleto.")}},
+  {text:"Encerrar a conversa.",req:()=>true,reply:"“Que seus passos encontrem chão.”",effect:()=>{}}
+ ]},
+ odran:{name:"Sir Odran, o cavaleiro",intro:"Um cavaleiro sem brasão mantém a espada no colo. “Não vou lutar por uma causa que não consigo nomear.”",options:[
+  {text:"“Então me diga o que aconteceu.”",req:()=>true,reply:"“Protegi uma porta. Do outro lado, alguém pediu para entrar usando a minha voz.”",effect:()=>{run.flags.odranStory=true;run.charisma++;log("Odran confiou parte de sua história: +1 Carisma.")}},
+  {text:"“Venha comigo. Ainda pode fazer a diferença.”",req:()=>run.charisma>=4,reply:"Ele se levanta. “Uma última marcha, então.”",effect:()=>{run.flags.ally=true;run.power+=2;run.items.push("Juramento de Odran");log("Odran se tornou seu aliado: +2 Poder.")}},
+  {text:"“Você tem medo.”",req:()=>true,reply:"“Tenho. É por isso que ainda estou vivo.”",effect:()=>{run.sanity=Math.max(0,run.sanity-3);run.flags.odranOffended=true;log("Odran se fechou: -3 Sanidade.")}},
+  {text:"Deixar o cavaleiro em paz.",req:()=>true,reply:"Ele volta a olhar para a espada.",effect:()=>{}}
+ ]},
+ echo:{name:"O Eco",intro:"A voz vem de dentro do seu próprio crânio. “Posso responder uma pergunta. Não prometo que será a pergunta que você fez.”",options:[
+  {text:"“O que existe no fundo?”",req:()=>true,reply:"“Uma escolha que você já fez. O resto é apenas o caminho até ela.”",effect:()=>{run.flags.knowsEnd=true;run.sanity=Math.max(0,run.sanity-7);run.intuition+=2;log("O Eco revelou um fragmento do fim: +2 Intuição, -7 Sanidade.")}},
+  {text:"“Como posso sobreviver?”",req:()=>run.intuition>=3,reply:"“Alimente o corpo. Questione a memória. Não confie em portas abertas.”",effect:()=>{run.food+=2;run.flags.warning=true;log("O Eco concedeu 2 Alimentos e um aviso.")}},
+  {text:"“Você é real?”",req:()=>run.sanity>=40,reply:"“Você também é. Por enquanto.”",effect:()=>{run.sanity=clamp(run.sanity+4,0,100);log("A resposta tranquilizou você: +4 Sanidade.")}},
+  {text:"Mandar a voz embora.",req:()=>true,reply:"O silêncio retorna — mas agora parece estar escutando.",effect:()=>{}}
+ ]},
+ monster:{name:room?.enemy?.name||"Criatura",intro:"A criatura interrompe o movimento. Seus olhos acompanham os seus. Talvez exista alguém ali, por trás da fome.",options:[
+  {text:"“Você não precisa continuar lutando.”",req:()=>run.charisma>=3,reply:"A criatura hesita. O som que emite parece quase um suspiro.",effect:()=>{run.flags.peace=true;run.xp+=3;log("Você evitou o combate e ganhou 3 XP.")}},
+  {text:"“Quem colocou você aqui?”",req:()=>run.intuition>=3,reply:"“A porta... pediu... um guarda.” A criatura recua.",effect:()=>{run.flags.creatorClue=true;run.sanity=Math.max(0,run.sanity-2);log("Você obteve uma pista sobre a origem da criatura.")}},
+  {text:"“Afaste-se e eu não o perseguirei.”",req:()=>true,reply:"A criatura abre passagem, desconfiada.",effect:()=>{run.flags.monsterFled=true;log("A criatura permitiu sua passagem.")}},
+  {text:"Provocar a criatura.",req:()=>true,reply:"Ela responde com um rugido e avança.",effect:()=>{run.flags.enraged=true;log("A criatura ficou hostil.")}}
+ ]}
+};
+function startDialogue(key){
+ activeDialogue=dialogueTrees[key];if(!activeDialogue)return;
+ $("roomTitle").textContent=activeDialogue.name;setStory(activeDialogue.intro);$("choices").innerHTML="";
+ activeDialogue.options.filter(o=>o.req()).forEach(o=>addChoice("❖",o.text,"",()=>dialogueChoice(o,key)));
+}
+function dialogueChoice(option,key){
+ setStory(activeDialogue.intro+"\n\n"+option.reply);option.effect();
+ if(key==="monster"){
+  if(run.flags.peace||run.flags.monsterFled){clearRoom("A conversa terminou sem combate.");return}
+  if(run.flags.enraged){enemyTurn();return}
+  $("choices").innerHTML="";addChoice("⚔","Atacar enquanto ela hesita","",attack);addChoice("↶","Recuar","",retreat);
+ }else{$("choices").innerHTML="";addChoice("→","Encerrar conversa","",()=>clearRoom())}
+ updateUI();
+}
+function showStatus(){alert(`ANDAR ${run.floor}\nVida: ${run.hp}/${run.maxHp}\nAlimento: ${run.food}\nSanidade: ${run.sanity}\nOuro: ${run.gold}\nCarisma: ${run.charisma} · Intuição: ${run.intuition}\nPoder: ${run.power} · XP: ${run.xp}\nInimigos vencidos: ${run.kills}`)}
+function updateUI(){
+ if(!run)return;
+ $("floorNumber").textContent=String(run.floor).padStart(2,"0");
+ $("classLabel").textContent=run.flags.ally?"ALIADO: ODRAN":"VIAJANTE";
+ const bar=(name,val,max,cls)=>`<div class="stat"><div class="stat-top"><span>${name}</span><b>${val} / ${max}</b></div><div class="track"><div class="fill ${cls}" style="width:${clamp(val/max*100,0,100)}%"></div></div></div>`;
+ $("stats").innerHTML=bar("Vida",run.hp,run.maxHp,"hp")+bar("Alimento",run.food,10,"food")+bar("Sanidade",run.sanity,100,"mind");
+ $("statusCard").classList.toggle("low-health",run.hp/run.maxHp<.28);
+ $("attributes").innerHTML=[["OURO",run.gold],["PODER",run.power],["CARISMA",run.charisma],["INTUIÇÃO",run.intuition],["EXPERIÊNCIA",run.xp],["ABATES",run.kills]].map(([k,v])=>`<div class="mini-stat"><span>${k}</span><b>${v}</b></div>`).join("");
+ $("inventory").innerHTML=run.items.length?run.items.map(x=>`<span class="item">${esc(x)}</span>`).join(""):'<span class="empty">Sua bolsa está vazia.</span>';
+ $("itemCount").textContent=`${run.items.length} ITENS`;
+ $("eventLog").innerHTML=run.log.map(x=>`<div class="log-entry">${esc(x)}</div>`).join("");
+}
+function die(reason){
+ const reward=Math.max(2,Math.floor(run.floor*1.6)+Math.floor(run.kills/2)+Math.floor(run.gold/10));
+ meta.echoes+=reward;meta.bestFloor=Math.max(meta.bestFloor,run.floor);saveMeta();
+ $("roomTag").textContent="EXPEDIÇÃO ENCERRADA";$("roomTitle").textContent="A descida terminou";
+ setStory(`${reason}\n\nVocê alcançou o andar ${run.floor}, venceu ${run.kills} inimigos e acumulou ${run.xp} XP.\n\nA masmorra reteve seus pertences, mas não apagou tudo. Você recebeu ${reward} Ecos para fortalecer a próxima expedição.`);
+ $("choices").innerHTML="";addChoice("✧","Voltar ao acampamento","A próxima descida começa com novas possibilidades.",backToMenu);updateUI();notify(`+${reward} Ecos`);
+}
+function abandonRun(){if(confirm("Abandonar esta expedição? Você perderá os recursos da run e receberá Ecos pela jornada.")){die("Você escolheu abandonar a descida antes que ela escolhesse por você.")}}
+function showCodex(){$("codexText").textContent=`Expedições: ${meta.runs}. Melhor andar: ${meta.bestFloor}. Ecos disponíveis: ${meta.echoes}. Melhorias permanentes — Vigor ancestral: ${meta.upgrades.vitality}; Voz convincente: ${meta.upgrades.charisma}; Olhar profundo: ${meta.upgrades.insight}.`;show("codex")}
+function backToMenu(){renderMenu();show("menu")}
+renderMenu();
+</script>
+</body>
+</html>
